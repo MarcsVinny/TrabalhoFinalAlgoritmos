@@ -24,5 +24,3 @@ Aplicar os principais conceitos da disciplina de algoritmos utilizando **TypeScr
 ## 🛠 Tecnologias Utilizadas
 
 - **TypeScript** – linguagem principal usada para a lógica
-- **JavaScript** – código final gerado após compilação
-- **Node.js** – usado para compilar TypeScript
