@@ -57,19 +57,19 @@ class TarefaRotina {
   }
 }
 
-// Tipo que representa uma tarefa genérica
+// Tipo genérico que pode ser tanto TarefaPrazo quanto TarefaRotina
 type Tarefa = TarefaPrazo | TarefaRotina;
 
-// Classe responsável por gerenciar as tarefas
+// Classe responsável por gerenciar as tarefas cadastradas
 class TarefaBD {
   tarefas: Tarefa[] = [];
 
-  // Adiciona uma nova tarefa
+  // Adiciona uma tarefa ao array de tarefas
   adicionar(t: Tarefa): void {
     this.tarefas.push(t);
   }
 
-  // Lista todas as tarefas formatadas
+  // Retorna uma string com todas as tarefas formatadas para exibição
   listar(): string {
     if (this.tarefas.length === 0) return "📭 Não há nenhuma tarefa cadastrada.";
 
@@ -84,14 +84,14 @@ class TarefaBD {
     return resultado;
   }
 
-  // Marca uma tarefa como concluída
+  // Marca a tarefa na posição pos como concluída
   concluir(pos: number): void {
     if (pos >= 0 && pos < this.tarefas.length) {
       this.tarefas[pos].concluida = true;
     }
   }
 
-  // Remove uma tarefa da lista
+  // Remove a tarefa na posição pos do array de tarefas
   remover(pos: number): void {
     if (pos >= 0 && pos < this.tarefas.length) {
       this.tarefas.splice(pos, 1);
@@ -103,7 +103,7 @@ class TarefaBD {
     let tarefasPrazo: TarefaPrazo[] = [];
     let tarefasRotina: TarefaRotina[] = [];
 
-    // Separa tarefas pendentes por tipo
+    // Separa as tarefas pendentes por tipo (prazo ou rotina)
     for (let i: number = 0; i < this.tarefas.length; i++) {
       let tarefa: Tarefa = this.tarefas[i];
       if (tarefa.tipo === "prazo" && !tarefa.concluida) {
@@ -117,13 +117,13 @@ class TarefaBD {
       return "🎉 Nenhuma pendência! Aproveite seu tempo.";
     }
 
-    // Função para reformatar data para ordenação (aaaa-mm-dd)
+    // Função auxiliar para converter data do formato dd/mm/aaaa para aaaa-mm-dd para facilitar ordenação
     function formatarData(data: string): string {
       let partes: string[] = data.split("/");
       return `${partes[2]}-${partes[1]}-${partes[0]}`;
     }
 
-    // Ordena as tarefas com prazo pela data
+    // Ordena as tarefas com prazo pela data de entrega, do mais urgente ao menos urgente
     tarefasPrazo.sort((a: TarefaPrazo, b: TarefaPrazo) => {
       let dataA: string = formatarData(a.dataEntrega);
       let dataB: string = formatarData(b.dataEntrega);
@@ -217,7 +217,7 @@ Escolha uma opção:`;
       if (tipo === "1") {
         let desc: string | null = prompt("Descrição da atividade:");
         let nivel: string | null = prompt("Dificuldade (leve, médio, difícil):");
-        let data: string | null = prompt("Data de entrega (ex: 14/08/2025)");
+        let data: string | null = prompt("Data de entrega (ex: 12/08/2025)");
         if (desc && nivel && data) {
           bd.adicionar(new TarefaPrazo(desc, nivel, data));
           alert(`✅ ${nome}, tarefa de prazo adicionada!`);
