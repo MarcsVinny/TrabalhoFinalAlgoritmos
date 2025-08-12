@@ -6,13 +6,15 @@ class TarefaPrazo {
   dataEntrega: string;
   concluida: boolean;
 
+  // Construtor: define os dados principais de uma tarefa com prazo
   constructor(desc: string, nivel: string, data: string) {
     this.descricao = desc;
     this.nivelDificuldade = nivel;
     this.dataEntrega = data;
-    this.concluida = false;
+    this.concluida = false; // Começa como não concluída
   }
 
+  // Retorna uma string com as informações formatadas da tarefa
   mostrar(numeroTarefa: number): string {
     let status: string;
     if (this.concluida) {
@@ -40,9 +42,10 @@ class TarefaRotina {
     this.diasSemana = dias;
     this.horarioInicio = inicio;
     this.horarioFim = fim;
-    this.concluida = false;
+    this.concluida = false; // Começa como não concluída
   }
 
+  // Retorna a tarefa formatada para exibição
   mostrar(numeroTarefa: number): string {
     let status: string;
     if (this.concluida) {
@@ -54,19 +57,23 @@ class TarefaRotina {
   }
 }
 
-// Tipo genérico de tarefa
+// Tipo que representa uma tarefa genérica
 type Tarefa = TarefaPrazo | TarefaRotina;
 
-// Banco de dados das tarefas
+// Classe responsável por gerenciar as tarefas
 class TarefaBD {
   tarefas: Tarefa[] = [];
 
+  // Adiciona uma nova tarefa
   adicionar(t: Tarefa): void {
     this.tarefas.push(t);
   }
 
+  // Lista todas as tarefas formatadas
   listar(): string {
     if (this.tarefas.length === 0) return "📭 Não há nenhuma tarefa cadastrada.";
+
+    // Percorre todas as tarefas, chamando o método mostrar() de cada uma e construindo uma única string
     let resultado: string = "";
     for (let i = 0; i < this.tarefas.length; i++) {
       resultado += this.tarefas[i].mostrar(i);
@@ -77,23 +84,27 @@ class TarefaBD {
     return resultado;
   }
 
+  // Marca uma tarefa como concluída
   concluir(pos: number): void {
     if (pos >= 0 && pos < this.tarefas.length) {
       this.tarefas[pos].concluida = true;
     }
   }
 
+  // Remove uma tarefa da lista
   remover(pos: number): void {
     if (pos >= 0 && pos < this.tarefas.length) {
       this.tarefas.splice(pos, 1);
     }
   }
 
+  // Mostra as tarefas mais urgentes (foco)
   foco(): string {
     let tarefasPrazo: TarefaPrazo[] = [];
     let tarefasRotina: TarefaRotina[] = [];
 
-    for (let i = 0; i < this.tarefas.length; i++) {
+    // Separa tarefas pendentes por tipo
+    for (let i: number = 0; i < this.tarefas.length; i++) {
       let tarefa: Tarefa = this.tarefas[i];
       if (tarefa.tipo === "prazo" && !tarefa.concluida) {
         tarefasPrazo.push(tarefa as TarefaPrazo);
@@ -106,15 +117,17 @@ class TarefaBD {
       return "🎉 Nenhuma pendência! Aproveite seu tempo.";
     }
 
+    // Função para reformatar data para ordenação (aaaa-mm-dd)
     function formatarData(data: string): string {
       let partes: string[] = data.split("/");
       return `${partes[2]}-${partes[1]}-${partes[0]}`;
     }
 
-    tarefasPrazo.sort((a, b) => {
-      let dataA = formatarData(a.dataEntrega);
-      let dataB = formatarData(b.dataEntrega);
-      if (dataA > dataB) {
+    // Ordena as tarefas com prazo pela data
+    tarefasPrazo.sort((a: TarefaPrazo, b: TarefaPrazo) => {
+      let dataA: string = formatarData(a.dataEntrega);
+      let dataB: string = formatarData(b.dataEntrega);
+      if (dataA > dataB){
         return 1;
       } else {
         return -1;
@@ -123,11 +136,17 @@ class TarefaBD {
 
     let foco: string = "🎯 FOCO:\n";
 
+    // Exibe tarefas com prazo
     if (tarefasPrazo.length > 0) {
       foco += "\n🗓️ Tarefas com prazo:\n";
-      for (let i = 0; i < tarefasPrazo.length; i++) {
-        let t = tarefasPrazo[i];
-        let status = t.concluida ? "Concluída ✅" : "Pendente ⌛";
+      for (let i: number = 0; i < tarefasPrazo.length; i++) {
+        let t: TarefaPrazo = tarefasPrazo[i];
+        let status: string;
+        if (t.concluida) {
+          status = "Concluída ✅";
+        } else {
+          status = "Pendente ⌛";
+        }
 
         if (i === 0) {
           foco += `[FOCO PRINCIPAL] : ${t.descricao} (${t.nivelDificuldade}) - Entrega: ${t.dataEntrega} - ${status}\n\n`;
@@ -137,11 +156,17 @@ class TarefaBD {
       }
     }
 
+    // Exibe tarefas de rotina
     if (tarefasRotina.length > 0) {
       foco += "\n🔁 Tarefas de rotina:\n";
-      for (let i = 0; i < tarefasRotina.length; i++) {
-        let t = tarefasRotina[i];
-        let status = t.concluida ? "Concluída ✅" : "Pendente ⌛";
+      for (let i: number = 0; i < tarefasRotina.length; i++) {
+        let t: TarefaRotina = tarefasRotina[i];
+        let status: string;
+        if (t.concluida) {
+          status = "Concluída ✅";
+        } else {
+          status = "Pendente ⌛";
+        }
         foco += `- ${t.descricao} (${t.nivelDificuldade}) - ${t.diasSemana} das ${t.horarioInicio} às ${t.horarioFim} - ${status}\n`;
       }
     }
@@ -150,10 +175,12 @@ class TarefaBD {
   }
 }
 
+// Função principal que executa o menu interativo do sistema
 function executarAgenda(): void {
-  let bd = new TarefaBD();
-  let sair = false;
+  let bd: TarefaBD = new TarefaBD();
+  let sair: boolean = false;
 
+  // Pede o nome do usuário e valida para não ficar vazio ou nulo
   let nome: string | null = null;
   while (!nome || nome.trim() === "") {
     nome = prompt("Olá! Qual é o seu nome?");
@@ -170,6 +197,7 @@ function executarAgenda(): void {
   alert(`Olá, ${nome}! Bem-vindo(a) à sua agenda.`);
 
   while (!sair) {
+    // Mostra o menu para o usuário com o nome dele no título
     let menu: string = `
 🧠 FOCO FÁCIL - Usuário: ${nome}
 1 - Adicionar tarefa
@@ -180,26 +208,26 @@ function executarAgenda(): void {
 6 - Sair
 Escolha uma opção:`;
 
-    let opcao = prompt(menu);
+    let opcao: string | null = prompt(menu);
     if (opcao === null) break;
 
     if (opcao === "1") {
-      let tipo = prompt("Qual o tipo de tarefa você deseja adicionar?\n1 - Com prazo\n2 - Rotina");
+      let tipo: string | null = prompt("Qual o tipo de tarefa você deseja adicionar?\n1 - Com prazo\n2 - Rotina");
 
       if (tipo === "1") {
-        let desc = prompt("Descrição da atividade:");
-        let nivel = prompt("Dificuldade (leve, médio, difícil):");
-        let data = prompt("Data de entrega (ex: 14/08/2025)");
+        let desc: string | null = prompt("Descrição da atividade:");
+        let nivel: string | null = prompt("Dificuldade (leve, médio, difícil):");
+        let data: string | null = prompt("Data de entrega (ex: 14/08/2025)");
         if (desc && nivel && data) {
           bd.adicionar(new TarefaPrazo(desc, nivel, data));
           alert(`✅ ${nome}, tarefa de prazo adicionada!`);
         }
       } else if (tipo === "2") {
-        let desc = prompt("Descrição da rotina:");
-        let nivel = prompt("Dificuldade (leve, médio, difícil):");
-        let dias = prompt("Dias da semana (ex: seg, qua, sex):");
-        let inicio = prompt("Horário de início (ex: 08:00):");
-        let fim = prompt("Horário de fim (ex: 10:00):");
+        let desc: string | null = prompt("Descrição da rotina:");
+        let nivel: string | null = prompt("Dificuldade (leve, médio, difícil):");
+        let dias: string | null = prompt("Dias da semana (ex: seg, qua, sex):");
+        let inicio: string | null = prompt("Horário de início (ex: 08:00):");
+        let fim: string | null = prompt("Horário de fim (ex: 10:00):");
         if (desc && nivel && dias && inicio && fim) {
           bd.adicionar(new TarefaRotina(desc, nivel, dias, inicio, fim));
           alert(`✅ ${nome}, tarefa de rotina adicionada!`);
@@ -222,7 +250,7 @@ Escolha uma opção:`;
         alert(`⚠️ ${nome}, nenhuma tarefa para concluir.`);
       } else {
         alert(`📋 ${nome}, tarefas:\n${bd.listar()}`);
-        let pos = Number(prompt("Digite o número da tarefa a concluir:")) - 1;
+        let pos: number = Number(prompt("Digite o número da tarefa a concluir:")) - 1;
         bd.concluir(pos);
         alert(`✅ ${nome}, tarefa marcada como concluída!`);
       }
@@ -233,7 +261,7 @@ Escolha uma opção:`;
         alert(`⚠️ ${nome}, nenhuma tarefa para remover.`);
       } else {
         alert(`📋 ${nome}, tarefas:\n${bd.listar()}`);
-        let pos = Number(prompt("Digite o número da tarefa a remover:")) - 1;
+        let pos: number = Number(prompt("Digite o número da tarefa a remover:")) - 1;
         bd.remover(pos);
         alert(`🗑️ ${nome}, tarefa removida!`);
       }
@@ -250,4 +278,5 @@ Escolha uma opção:`;
   }
 }
 
+// Executa o programa
 executarAgenda();
