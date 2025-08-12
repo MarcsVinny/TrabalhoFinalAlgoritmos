@@ -1,7 +1,7 @@
 # 📅 Agenda Digital – Projeto Final de Algoritmos
 
 Este projeto é uma **agenda digital interativa** criada como trabalho final da disciplina de **Algoritmos**, no curso de Análise e Desenvolvimento de Sistemas do Instituto Federal do Piauí.
-
+Colaboradores: Josiane10 e Gisele002
 ---
 
 ## 🧠 Objetivo do Projeto
